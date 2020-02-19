@@ -13,7 +13,7 @@ from sklearn.preprocessing import LabelEncoder
 
 '''
     Images will be resized to 100x100 resolution. There are 5 different classes of flowers and the classification
-    will be processed in 40 epochs with batch size of 32
+    will be processed in 20 epochs with batch size of 16
 '''
 num_epochs = 20
 batch_size = 16
