@@ -12,12 +12,12 @@ from keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
 
 '''
-    Images will be resized to 200x200 resolution. There are 5 different classes of flowers and the classification
+    Images will be resized to 100x100 resolution. There are 5 different classes of flowers and the classification
     will be processed in 40 epochs with batch size of 32
 '''
 num_epochs = 20
 batch_size = 16
-shape = 256
+shape = 100
 num_classes = 5
 
 '''
@@ -122,4 +122,8 @@ train = model.fit(train_flower_images,
 test_eval = model.evaluate(test_flower_images, test_flower_labels, verbose=1)
 
 print('Test loss:', test_eval[0])
-print('Test accuracy:', test_eval[1])
+print('Test accuracy:', test_eval[1]*100 , "%")
+
+'''
+    Best prediction achieved: 86.25%
+'''
