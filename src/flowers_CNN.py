@@ -1,16 +1,14 @@
-import numpy as np
-import keras
-import cv2
 import csv
 import os
 
-from keras.layers.advanced_activations import LeakyReLU
-from keras.callbacks.callbacks import ModelCheckpoint
+import cv2
+import keras
+import numpy as np
 from keras.layers import Dense, Flatten, Conv2D
 from keras.layers import MaxPooling2D
-from keras.utils import to_categorical
+from keras.layers.advanced_activations import LeakyReLU
 from keras.models import Sequential
-
+from keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
 
 '''
@@ -18,10 +16,9 @@ from sklearn.preprocessing import LabelEncoder
     will be processed in 40 epochs with batch size of 32
 '''
 num_epochs = 20
-batch_size = 64
-shape = 100
+batch_size = 16
+shape = 256
 num_classes = 5
-
 
 '''
     Network model consists of multiple layers.
@@ -50,7 +47,6 @@ model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.Adam(),
               metrics=['accuracy'])
 
-
 '''
     Reading training labels and based on associated picture names reading images from training folder.
     Collecting images and labels in two different lists, but in a corresponding order.
@@ -72,7 +68,6 @@ with open('../resources/train_labels.csv') as train_labels:
             resized_image = cv2.resize(train_flower_img, (shape, shape), interpolation=cv2.INTER_NEAREST)
             train_flower_images.append(resized_image)
             train_flower_labels.append(row[1])
-
 
 '''
     Reading test labels and based on associated picture names reading images from training folder.
@@ -96,18 +91,19 @@ with open('../resources/test_labels.csv') as test_labels:
             test_flower_images.append(resized_image)
             test_flower_labels.append(row[1])
 
-
 label_encoder = LabelEncoder()
 
-train_flower_images = np.array(train_flower_images)                                     # x for training
+train_flower_images = np.array(train_flower_images)  # x for training
 train_flower_labels = to_categorical(label_encoder.fit_transform(train_flower_labels),
-                                     num_classes=num_classes)                           # y for training
+                                     num_classes=num_classes)  # y for training
 
-
-test_flower_images = np.array(test_flower_images)                                       # x for testing
+test_flower_images = np.array(test_flower_images)  # x for testing
 test_flower_labels = to_categorical(label_encoder.fit_transform(test_flower_labels),
-                                    num_classes=num_classes)                            # y for testing
+                                    num_classes=num_classes)  # y for testing
 
+
+train_flower_images = train_flower_images / 255
+test_flower_images = test_flower_images / 255
 
 
 '''
@@ -116,14 +112,14 @@ test_flower_labels = to_categorical(label_encoder.fit_transform(test_flower_labe
 train = model.fit(train_flower_images,
                   train_flower_labels,
                   batch_size=batch_size,
-                  epochs=num_epochs, verbose=1,
-                  validation_data=(test_flower_images, test_flower_labels))
+                  epochs=num_epochs,
+                  verbose=1,
+                  validation_split=0.3)
 
 '''
     Evaluating test data and labels 
 '''
-test_eval = model.evaluate(test_flower_images, test_flower_labels, verbose=0)
-
+test_eval = model.evaluate(test_flower_images, test_flower_labels, verbose=1)
 
 print('Test loss:', test_eval[0])
 print('Test accuracy:', test_eval[1])
